@@ -1,8 +1,8 @@
 using LabelzoomDotnetSdk;
 
-namespace LabelzoomDotnetSdkTest
+namespace LabelzoomDotnetSdk.Tests
 {
-    public class LabeloomClientTests
+    public class LabelzoomClientTests
     {
         [Fact]
         public async Task Convert_PdfToZpl_ReturnsValidZpl()
