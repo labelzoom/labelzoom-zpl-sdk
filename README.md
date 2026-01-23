@@ -12,7 +12,7 @@ This repository provides SDKs and code samples for integrating with the [LabelZo
 
 - **PDF to ZPL Conversion**: Convert PDF documents to ZPL format
 - **PNG to ZPL Conversion**: Convert PNG images to ZPL format
-- **Multiple Language Support**: SDKs and samples available for .NET, Python, and Groovy
+- **Multiple Language Support**: SDKs and samples available for .NET, Java, Python, and Groovy
 - **Streaming Support**: Handle large multi-page documents efficiently with streaming APIs
 - **Direct Printer Integration**: Sample code for sending ZPL directly to Zebra printers
 
@@ -23,6 +23,7 @@ Choose your preferred language or platform:
 | Language/Platform | Description | Documentation |
 |-------------------|-------------|---------------|
 | [.NET](dotnet/) | Full-featured SDK with async support for .NET Standard 2.0+ | [.NET README](dotnet/README.md) |
+| [Java](java/) | Full-featured SDK with streaming support for Java 11+ | [Java README](java/README.md) |
 | [Python](python/) | Simple Python scripts for quick integration | [Python README](python/README.md) |
 | [Groovy](groovy/) | Groovy scripts for JVM-based environments | [Groovy README](groovy/README.md) |
 
