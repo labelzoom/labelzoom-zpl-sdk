@@ -1,0 +1,41 @@
+name: .NET Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'dotnet/**'
+      - '.github/workflows/dotnet-test.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'dotnet/**'
+      - '.github/workflows/dotnet-test.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./dotnet
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./dotnet
+    
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+      working-directory: ./dotnet
+      env:
+        LABELZOOM_API_TOKEN: ${{ secrets.LABELZOOM_API_TOKEN }}
+        LABELZOOM_ENDPOINT: ${{ secrets.LABELZOOM_ENDPOINT }}
