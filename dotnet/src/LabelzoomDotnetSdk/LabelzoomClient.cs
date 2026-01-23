@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +21,12 @@ namespace LabelzoomDotnetSdk
 
         public string Endpoint { get; set; } = "https://api.labelzoom.net";
 
+        /// <summary>
+        /// Converts a PDF document to a single ZPL string. Best used for smaller documents with fewer pages.
+        /// </summary>
+        /// <param name="pdfPath"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         public async Task<string> PdfToZpl(string pdfPath, CancellationToken ct = default)
         {
             using (var fileStream = File.OpenRead(pdfPath))
@@ -41,6 +44,18 @@ namespace LabelzoomDotnetSdk
             }
         }
 
+        /// <summary>
+        /// Converts a PDF document to ZPL and streams the response one label at a time. Best used for larger documents with many pages.
+        /// Each label returned will invoke the callback function <c>onLabelAsync</c>.
+        /// </summary>
+        /// <remarks>
+        /// In future versions, we will use <c>IAsyncEnumerable</c> rather than a callback function.
+        /// </remarks>
+        /// <param name="pdfPath"></param>
+        /// <param name="onLabelAsync">Callback function called once per label</param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task PdfToZplAsync(string pdfPath, Func<string, Task> onLabelAsync, CancellationToken ct = default)
         {
             if (onLabelAsync == null) throw new ArgumentNullException(nameof(onLabelAsync));
