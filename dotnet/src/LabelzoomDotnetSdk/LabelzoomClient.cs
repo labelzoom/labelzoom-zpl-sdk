@@ -5,28 +5,97 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LabelzoomDotnetSdk.Conversion;
 
 namespace LabelzoomDotnetSdk
 {
     public class LabelzoomClient : IDisposable
     {
         private readonly HttpClient client;
+        private readonly bool shouldDisposeHttpClient;
         private bool disposedValue;
 
+        /// <summary>
+        /// Creates a new instance of LabelzoomClient with the specified authentication token.
+        /// </summary>
+        /// <param name="token">The authentication token for the LabelZoom API.</param>
         public LabelzoomClient(string token)
         {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentException("Token cannot be null or empty.", nameof(token));
+            }
+
             client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            shouldDisposeHttpClient = true;
         }
 
+        /// <summary>
+        /// Internal constructor used by LabelzoomClientBuilder.
+        /// </summary>
+        /// <param name="options">Configuration options for the client.</param>
+        internal LabelzoomClient(LabelzoomClientOptions options)
+        {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            Endpoint = options.Endpoint;
+
+            if (options.HttpClient != null)
+            {
+                client = options.HttpClient;
+                shouldDisposeHttpClient = options.DisposeHttpClient;
+            }
+            else
+            {
+                client = new HttpClient();
+                shouldDisposeHttpClient = true;
+            }
+
+            if (options.Timeout.HasValue)
+            {
+                client.Timeout = options.Timeout.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(options.Token))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.Token);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the API endpoint URL.
+        /// </summary>
         public string Endpoint { get; set; } = "https://api.labelzoom.net";
+
+        /// <summary>
+        /// Gets the HttpClient used for API requests. Internal use only.
+        /// </summary>
+        internal HttpClient GetHttpClient() => client;
+
+        /// <summary>
+        /// Creates a fluent conversion request builder.
+        /// </summary>
+        /// <returns>A conversion request builder for specifying source and target formats.</returns>
+        /// <example>
+        /// <code>
+        /// var zpl = await client.Convert().FromPdf("document.pdf").ToZpl().ExecuteAsync();
+        /// </code>
+        /// </example>
+        public ConversionRequestBuilder Convert()
+        {
+            return new ConversionRequestBuilder(this);
+        }
 
         /// <summary>
         /// Converts a PDF document to a single ZPL string. Best used for smaller documents with fewer pages.
         /// </summary>
-        /// <param name="pdfPath"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
+        /// <param name="pdfPath">Path to the PDF file.</param>
+        /// <param name="ct">Optional cancellation token.</param>
+        /// <returns>The complete ZPL string.</returns>
         public async Task<string> PdfToZpl(string pdfPath, CancellationToken ct = default)
         {
             using (var fileStream = File.OpenRead(pdfPath))
@@ -51,11 +120,11 @@ namespace LabelzoomDotnetSdk
         /// <remarks>
         /// In future versions, we will use <c>IAsyncEnumerable</c> rather than a callback function.
         /// </remarks>
-        /// <param name="pdfPath"></param>
-        /// <param name="onLabelAsync">Callback function called once per label</param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="pdfPath">Path to the PDF file.</param>
+        /// <param name="onLabelAsync">Callback function called once per label.</param>
+        /// <param name="ct">Optional cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when onLabelAsync is null.</exception>
         public async Task PdfToZplAsync(string pdfPath, Func<string, Task> onLabelAsync, CancellationToken ct = default)
         {
             if (onLabelAsync == null) throw new ArgumentNullException(nameof(onLabelAsync));
@@ -91,32 +160,31 @@ namespace LabelzoomDotnetSdk
             }
         }
 
+        /// <summary>
+        /// Disposes the LabelzoomClient and releases resources.
+        /// </summary>
+        /// <param name="disposing">True if disposing managed resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
-                    client.Dispose();
+                    if (shouldDisposeHttpClient && client != null)
+                    {
+                        client.Dispose();
+                    }
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~LabelzoomClient()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
+        /// <summary>
+        /// Disposes the LabelzoomClient and releases resources.
+        /// </summary>
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
