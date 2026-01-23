@@ -51,7 +51,7 @@ namespace LabelzoomDotnetSdk.Conversion
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Post, $"{client.Endpoint}/api/v2/convert/{GetSourceFormat()}/to/zpl"))
+                using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v2/convert/{GetSourceFormat()}/to/zpl"))
                 using (var content = new StreamContent(streamToUse))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
@@ -99,7 +99,7 @@ namespace LabelzoomDotnetSdk.Conversion
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Post, $"{client.Endpoint}/api/v2.5/convert/{GetSourceFormat()}/to/zpl"))
+                using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v2.5/convert/{GetSourceFormat()}/to/zpl"))
                 using (var content = new StreamContent(streamToUse))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue(contentType);

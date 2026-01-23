@@ -3,23 +3,8 @@ using LabelzoomDotnetSdk;
 
 namespace LabelzoomDotnetSdk.Tests
 {
-    public class LabelzoomClientTests: IDisposable
+    public class LabelzoomClientTests: TestBase
     {
-        private bool disposedValue;
-
-        private readonly LabelzoomClient _client;
-
-        public LabelzoomClientTests()
-        {
-            var token = Environment.GetEnvironmentVariable("LABELZOOM_API_TOKEN") ?? throw new ArgumentException("LABELZOOM_API_TOKEN environment variable was not defined");
-            var endpoint = Environment.GetEnvironmentVariable("LABELZOOM_ENDPOINT") ?? throw new ArgumentException("LABELZOOM_ENDPOINT environment variable was not defined");
-
-            _client = new LabelzoomClientBuilder()
-                .WithToken(token)
-                .WithEndpoint(endpoint)
-                .Build();
-        }
-
         [Fact]
         public async Task Convert_PdfToZpl_ReturnsValidZpl()
         {
@@ -53,25 +38,6 @@ namespace LabelzoomDotnetSdk.Tests
             Assert.Contains("^XA", zplBuffer.ToString());
             Assert.Contains("^XZ", zplBuffer.ToString());
             Assert.Equal(12, labelCount);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _client.Dispose();
-                }
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

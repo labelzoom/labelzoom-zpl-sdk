@@ -6,7 +6,7 @@ using Xunit;
 
 namespace LabelzoomDotnetSdk.Tests
 {
-    public class FluentApiTests
+    public class FluentApiTests: TestBase
     {
         [Fact]
         public async Task FluentApi_PdfToZpl_ReturnsValidZpl()
@@ -14,17 +14,14 @@ namespace LabelzoomDotnetSdk.Tests
             var pdfPath = Path.Combine(AppContext.BaseDirectory, "TestData", "4x6_document.pdf");
             Assert.True(File.Exists(pdfPath), $"Missing test PDF: {pdfPath}");
 
-            using (var client = new LabelzoomClient(""))
-            {
-                var zpl = await client.Convert()
-                    .FromPdf(pdfPath)
-                    .ToZpl()
-                    .ExecuteAsync();
+            var zpl = await _client.Convert()
+                .FromPdf(pdfPath)
+                .ToZpl()
+                .ExecuteAsync();
 
-                Assert.NotNull(zpl);
-                Assert.Contains("^XA", zpl);
-                Assert.Contains("^XZ", zpl);
-            }
+            Assert.NotNull(zpl);
+            Assert.Contains("^XA", zpl);
+            Assert.Contains("^XZ", zpl);
         }
 
         [Fact]
@@ -33,98 +30,71 @@ namespace LabelzoomDotnetSdk.Tests
             var pdfPath = Path.Combine(AppContext.BaseDirectory, "TestData", "4x6_document.pdf");
             Assert.True(File.Exists(pdfPath), $"Missing test PDF: {pdfPath}");
 
-            using (var client = new LabelzoomClient(""))
-            {
-                int labelCount = 0;
-                string zplBuffer = "";
+            int labelCount = 0;
+            string zplBuffer = "";
 
-                await client.Convert()
-                    .FromPdf(pdfPath)
-                    .ToZpl()
-                    .StreamAsync(async (zpl) =>
-                    {
-                        labelCount++;
-                        zplBuffer += zpl;
-                        await Task.CompletedTask;
-                    });
+            await _client.Convert()
+                .FromPdf(pdfPath)
+                .ToZpl()
+                .StreamAsync(async (zpl) =>
+                {
+                    labelCount++;
+                    zplBuffer += zpl;
+                    await Task.CompletedTask;
+                });
 
-                Assert.NotNull(zplBuffer);
-                Assert.Contains("^XA", zplBuffer);
-                Assert.Contains("^XZ", zplBuffer);
-                Assert.Equal(12, labelCount);
-            }
+            Assert.NotNull(zplBuffer);
+            Assert.Contains("^XA", zplBuffer);
+            Assert.Contains("^XZ", zplBuffer);
+            Assert.Equal(12, labelCount);
         }
 
         [Fact]
         public void FluentApi_FromPdf_WithNullPath_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<ArgumentException>(() => client.Convert().FromPdf((string)null));
-            }
+            Assert.Throws<ArgumentException>(() => _client.Convert().FromPdf((string)null));
         }
 
         [Fact]
         public void FluentApi_FromPdf_WithEmptyPath_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<ArgumentException>(() => client.Convert().FromPdf(""));
-            }
+            Assert.Throws<ArgumentException>(() => _client.Convert().FromPdf(""));
         }
 
         [Fact]
         public void FluentApi_FromPdf_WithNonExistentFile_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<FileNotFoundException>(() => client.Convert().FromPdf("nonexistent.pdf"));
-            }
+            Assert.Throws<FileNotFoundException>(() => _client.Convert().FromPdf("nonexistent.pdf"));
         }
 
         [Fact]
         public void FluentApi_FromPdf_WithNullStream_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<ArgumentNullException>(() => client.Convert().FromPdf((Stream)null));
-            }
+            Assert.Throws<ArgumentNullException>(() => _client.Convert().FromPdf((Stream)null));
         }
 
         [Fact]
         public void FluentApi_FromPng_WithNullPath_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<ArgumentException>(() => client.Convert().FromPng((string)null));
-            }
+            Assert.Throws<ArgumentException>(() => _client.Convert().FromPng((string)null));
         }
 
         [Fact]
         public void FluentApi_FromPng_WithNonExistentFile_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<FileNotFoundException>(() => client.Convert().FromPng("nonexistent.png"));
-            }
+            Assert.Throws<FileNotFoundException>(() => _client.Convert().FromPng("nonexistent.png"));
         }
 
         [Fact]
         public void FluentApi_FromZpl_WithNullContent_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<ArgumentException>(() => client.Convert().FromZpl(null));
-            }
+            Assert.Throws<ArgumentException>(() => _client.Convert().FromZpl(null));
         }
 
         [Fact]
         public void FluentApi_FromZpl_WithEmptyContent_ThrowsException()
         {
-            using (var client = new LabelzoomClient("test-token"))
-            {
-                Assert.Throws<ArgumentException>(() => client.Convert().FromZpl(""));
-            }
+            Assert.Throws<ArgumentException>(() => _client.Convert().FromZpl(""));
         }
 
         [Fact]
@@ -133,16 +103,13 @@ namespace LabelzoomDotnetSdk.Tests
             var pdfPath = Path.Combine(AppContext.BaseDirectory, "TestData", "4x6_document.pdf");
             Assert.True(File.Exists(pdfPath), $"Missing test PDF: {pdfPath}");
 
-            using (var client = new LabelzoomClient(""))
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                {
-                    await client.Convert()
-                        .FromPdf(pdfPath)
-                        .ToZpl()
-                        .StreamAsync(null);
-                });
-            }
+                await _client.Convert()
+                    .FromPdf(pdfPath)
+                    .ToZpl()
+                    .StreamAsync(null);
+            });
         }
 
         [Fact]
@@ -151,19 +118,14 @@ namespace LabelzoomDotnetSdk.Tests
             var pdfPath = Path.Combine(AppContext.BaseDirectory, "TestData", "4x6_document.pdf");
             Assert.True(File.Exists(pdfPath), $"Missing test PDF: {pdfPath}");
 
-            using (var client = new LabelzoomClientBuilder()
-                .WithToken("")
-                .Build())
-            {
-                var zpl = await client.Convert()
-                    .FromPdf(pdfPath)
-                    .ToZpl()
-                    .ExecuteAsync();
+            var zpl = await _client.Convert()
+                .FromPdf(pdfPath)
+                .ToZpl()
+                .ExecuteAsync();
 
-                Assert.NotNull(zpl);
-                Assert.Contains("^XA", zpl);
-                Assert.Contains("^XZ", zpl);
-            }
+            Assert.NotNull(zpl);
+            Assert.Contains("^XA", zpl);
+            Assert.Contains("^XZ", zpl);
         }
     }
 }

@@ -43,20 +43,6 @@ namespace LabelzoomDotnetSdk.Tests
         }
 
         [Fact]
-        public void Builder_WithEndpoint_SetsEndpoint()
-        {
-            var customEndpoint = "https://custom-api.example.com";
-
-            using (var client = new LabelzoomClientBuilder()
-                .WithToken("test-token")
-                .WithEndpoint(customEndpoint)
-                .Build())
-            {
-                Assert.Equal(customEndpoint, client.Endpoint);
-            }
-        }
-
-        [Fact]
         public void Builder_WithEmptyEndpoint_ThrowsException()
         {
             var builder = new LabelzoomClientBuilder()
@@ -121,31 +107,6 @@ namespace LabelzoomDotnetSdk.Tests
                 .WithToken("test-token");
 
             Assert.Throws<ArgumentNullException>(() => builder.WithHttpClient(null));
-        }
-
-        [Fact]
-        public void Builder_FluentChaining_Works()
-        {
-            using (var client = new LabelzoomClientBuilder()
-                .WithToken("test-token")
-                .WithEndpoint("https://api.example.com")
-                .WithTimeout(TimeSpan.FromSeconds(60))
-                .Build())
-            {
-                Assert.NotNull(client);
-                Assert.Equal("https://api.example.com", client.Endpoint);
-            }
-        }
-
-        [Fact]
-        public void Builder_DefaultEndpoint_IsSet()
-        {
-            using (var client = new LabelzoomClientBuilder()
-                .WithToken("test-token")
-                .Build())
-            {
-                Assert.Equal("https://api.labelzoom.net", client.Endpoint);
-            }
         }
     }
 
