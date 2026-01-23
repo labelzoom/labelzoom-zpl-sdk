@@ -1,5 +1,8 @@
 name: .NET Tests
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main, develop ]
@@ -11,7 +14,6 @@ on:
     paths:
       - 'dotnet/**'
       - '.github/workflows/dotnet-test.yml'
-  workflow_dispatch:
 
 jobs:
   test:
