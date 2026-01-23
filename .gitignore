@@ -86,3 +86,7 @@ TestResults/
 *.bak
 *.cache
 
+# Environment files with secrets
+.env
+.env.local
+

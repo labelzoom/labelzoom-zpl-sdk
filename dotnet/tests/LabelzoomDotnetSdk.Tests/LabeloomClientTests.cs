@@ -25,8 +25,9 @@ namespace LabelzoomDotnetSdk.Tests
             var pdfPath = Path.Combine(AppContext.BaseDirectory, "TestData", "4x6_document.pdf");
             Assert.True(File.Exists(pdfPath), $"Missing test PDF: {pdfPath}");
 
-            using (var client = new LabelzoomClient(""))
+            using (var client = new LabelzoomClient(Environment.GetEnvironmentVariable("LABELZOOM_API_TOKEN") ?? ""))
             {
+                client.Endpoint = Environment.GetEnvironmentVariable("LABELZOOM_ENDPOINT");
                 int labelCount = 0;
                 string zplBuffer = "";
                 await client.PdfToZplAsync(pdfPath, async (zpl) => {
