@@ -70,44 +70,43 @@ namespace LabelzoomDotnetSdk.Conversion
             return new ZplSourceBuilder(client, zplContent);
         }
 
-        /// <summary>
-        /// Specifies a PNG file as the source for conversion.
-        /// </summary>
-        /// <param name="pngPath">Path to the PNG file.</param>
-        /// <returns>A builder for specifying the target format.</returns>
-        public PngSourceBuilder FromPng(string pngPath)
+        public RasterSourceBuilder FromBmp(string bmpPath) => FromRaster(bmpPath, "BMP", "image/bmp");
+        public RasterSourceBuilder FromBmp(Stream bmpStream) => FromRaster(bmpStream, "image/bmp");
+        public RasterSourceBuilder FromGif(string gifPath) => FromRaster(gifPath, "GIF", "image/gif");
+        public RasterSourceBuilder FromGif(Stream gifStream) => FromRaster(gifStream, "image/gif");
+        public RasterSourceBuilder FromJpeg(string jpegPath) => FromRaster(jpegPath, "JPEG", "image/jpeg");
+        public RasterSourceBuilder FromJpeg(Stream jpegStream) => FromRaster(jpegStream, "image/jpeg");
+        public RasterSourceBuilder FromPng(string pngPath) => FromRaster(pngPath, "PNG", "image/png");
+        public RasterSourceBuilder FromPng(Stream pngStream) => FromRaster(pngStream, "image/png");
+
+        public RasterSourceBuilder FromRaster(string rasterPath, string fileType, string contentType)
         {
-            if (string.IsNullOrWhiteSpace(pngPath))
+            if (string.IsNullOrWhiteSpace(rasterPath))
             {
-                throw new ArgumentException("PNG path cannot be null or empty.", nameof(pngPath));
+                throw new ArgumentException(fileType + " path cannot be null or empty.", nameof(rasterPath));
             }
 
-            if (!File.Exists(pngPath))
+            if (!File.Exists(rasterPath))
             {
-                throw new FileNotFoundException($"PNG file not found: {pngPath}", pngPath);
+                throw new FileNotFoundException($"{fileType} file not found: {rasterPath}", rasterPath);
             }
 
-            return new PngSourceBuilder(client, pngPath);
+            return new RasterSourceBuilder(client, contentType, rasterPath);
         }
 
-        /// <summary>
-        /// Specifies a PNG stream as the source for conversion.
-        /// </summary>
-        /// <param name="pngStream">Stream containing PNG data.</param>
-        /// <returns>A builder for specifying the target format.</returns>
-        public PngSourceBuilder FromPng(Stream pngStream)
+        public RasterSourceBuilder FromRaster(Stream rasterStream, string contentType)
         {
-            if (pngStream == null)
+            if (rasterStream == null)
             {
-                throw new ArgumentNullException(nameof(pngStream));
+                throw new ArgumentNullException(nameof(rasterStream));
             }
 
-            if (!pngStream.CanRead)
+            if (!rasterStream.CanRead)
             {
-                throw new ArgumentException("Stream must be readable.", nameof(pngStream));
+                throw new ArgumentException("Stream must be readable.", nameof(rasterStream));
             }
 
-            return new PngSourceBuilder(client, pngStream);
+            return new RasterSourceBuilder(client, contentType, rasterStream);
         }
     }
 }

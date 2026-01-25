@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,14 +8,11 @@ namespace LabelzoomDotnetSdk.Conversion
     /// <summary>
     /// Builder for PNG target conversions (placeholder for future implementation).
     /// </summary>
-    public class PngTargetBuilder
+    public class RasterTargetBuilder: TargetBuilderBase
     {
-        private readonly LabelzoomClient client;
+        internal RasterTargetBuilder(LabelzoomClient client, string sourcePath, string contentType) : base(client, sourcePath, contentType) { }
 
-        internal PngTargetBuilder(LabelzoomClient client)
-        {
-            this.client = client ?? throw new ArgumentNullException(nameof(client));
-        }
+        internal RasterTargetBuilder(LabelzoomClient client, Stream sourceStream, string contentType) : base(client, sourceStream, contentType) { }
 
         /// <summary>
         /// Executes the conversion and returns the PNG as a byte array.

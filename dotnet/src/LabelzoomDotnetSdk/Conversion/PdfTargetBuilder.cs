@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,14 +8,11 @@ namespace LabelzoomDotnetSdk.Conversion
     /// <summary>
     /// Builder for PDF target conversions (placeholder for future implementation).
     /// </summary>
-    public class PdfTargetBuilder
+    public class PdfTargetBuilder: TargetBuilderBase
     {
-        private readonly LabelzoomClient client;
+        internal PdfTargetBuilder(LabelzoomClient client, string sourcePath, string contentType) : base(client, sourcePath, contentType) { }
 
-        internal PdfTargetBuilder(LabelzoomClient client)
-        {
-            this.client = client ?? throw new ArgumentNullException(nameof(client));
-        }
+        internal PdfTargetBuilder(LabelzoomClient client, Stream sourceStream, string contentType) : base(client, sourceStream, contentType) { }
 
         /// <summary>
         /// Executes the conversion and returns the PDF as a byte array.
