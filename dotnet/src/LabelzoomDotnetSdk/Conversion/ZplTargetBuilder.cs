@@ -1,10 +1,4 @@
-using System;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LabelzoomDotnetSdk.Conversion
 {
@@ -20,6 +14,8 @@ namespace LabelzoomDotnetSdk.Conversion
         internal ZplTargetBuilder(LabelzoomClient client, Stream sourceStream, string contentType) : base(client, sourceStream, contentType)
         {
         }
+
+        protected override string GetTargetFormat() => "zpl";
     }
 }
 

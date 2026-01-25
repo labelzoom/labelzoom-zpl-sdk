@@ -23,6 +23,8 @@ namespace LabelzoomDotnetSdk.Conversion
         {
             throw new NotImplementedException("PDF target conversion is not yet supported by the API.");
         }
+
+        protected override string GetTargetFormat() => "pdf";
     }
 }
 

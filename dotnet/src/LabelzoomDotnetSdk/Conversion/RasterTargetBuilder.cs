@@ -23,6 +23,8 @@ namespace LabelzoomDotnetSdk.Conversion
         {
             throw new NotImplementedException("PNG target conversion is not yet supported by the API.");
         }
+
+        protected override string GetTargetFormat() => contentType.Split('/')[1];
     }
 }
 

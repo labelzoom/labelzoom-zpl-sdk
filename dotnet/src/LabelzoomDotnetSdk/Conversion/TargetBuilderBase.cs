@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,6 +39,8 @@ namespace LabelzoomDotnetSdk.Conversion
             throw new InvalidOperationException($"Unsupported content type: {contentType}");
         }
 
+        protected abstract string GetTargetFormat();
+
         /// <summary>
         /// Executes the conversion and returns the complete ZPL as a single string.
         /// Best used for smaller documents with fewer pages.
@@ -60,7 +60,7 @@ namespace LabelzoomDotnetSdk.Conversion
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v2/convert/{GetSourceFormat()}/to/zpl"))
+                using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v2/convert/{GetSourceFormat()}/to/{GetTargetFormat()}"))
                 using (var content = new StreamContent(streamToUse))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
@@ -108,7 +108,7 @@ namespace LabelzoomDotnetSdk.Conversion
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v2.5/convert/{GetSourceFormat()}/to/zpl"))
+                using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v2.5/convert/{GetSourceFormat()}/to/{GetTargetFormat()}"))
                 using (var content = new StreamContent(streamToUse))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
